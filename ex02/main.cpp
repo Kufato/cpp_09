@@ -6,11 +6,27 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:29 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/13 17:02:30 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/13 18:13:19 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
+
+template <typename T>
+static void	print(const T &container, std::string message) {
+	std::cout << message << std::flush;
+	for (typename T::const_iterator	it = container.begin(); it != container.end(); it++)
+		std::cout << " " << *it << std::flush;
+	std::cout << std::endl;
+}
+
+static bool	checkNegativeNumber(char **argv) {
+	for (int i = 1; argv[i]; i++) {
+		if (std::atoi(argv[i]) < 0)
+			return (false);
+	}
+	return (true);
+}
 
 int main(int argc, char **argv) {
 	if (argc < 2) {
@@ -22,26 +38,33 @@ int main(int argc, char **argv) {
 		return (1);
 	}
 	try {
-		std::vector<int>	XVector;
+		std::deque<int>		deque;
+		std::vector<int>	vector;
+		double				vectorTime, dequeTime;
+		clock_t				mainStart, vectorEnd, dequeEnd;
 
-		for (int i = 1; argv[i]; i++) {
-			if (std::atoi(argv[i]) < 0)
-				throw PmergeMe::NegativeNumberException();
-		}
-		std::cout << "Before:\t" << std::flush;
+		if (!checkNegativeNumber(argv))
+			throw PmergeMe::NegativeNumberException();
 		for (int i = 1; argv[i]; i++)
-			std::cout << ' ' << argv[i] << std::flush;
-		std::cout << std::endl;
+			vector.push_back(std::atoi(argv[i]));
 		for (int i = 1; argv[i]; i++)
-			XVector.push_back(std::atoi(argv[i]));
-		XVector = PmergeMe::algorithmVector(XVector);
-		std::cout << "After:\t" << std::flush;
-		for (std::vector<int>::iterator it = XVector.begin(); it != XVector.end(); it++)
-			std::cout << " " << *it << std::flush;
-		std::cout << std::endl;
+			deque.push_back(std::atoi(argv[i]));
+		print(vector, "Before:\t");
+		mainStart = clock();
+		vector = PmergeMe::algorithm(vector);
+		vectorEnd = clock();
+		deque = PmergeMe::algorithm(deque);
+		dequeEnd = clock();
+		print(vector, "After:\t");
+		vectorTime = (vectorEnd - mainStart) / (double) CLOCKS_PER_SEC * 1000000.0;
+		dequeTime = (dequeEnd - vectorEnd) / (double) CLOCKS_PER_SEC * 1000000.0;
+		std::cout << "Time to process a range of " << vector.size() << " elements with std::vector : " << std::flush;
+		std::cout << std::fixed << std::setprecision(5) << vectorTime << " us" << std::endl;
+		std::cout << "Time to process a range of " << deque.size() << " elements with std::deque : " << std::flush;
+		std::cout << std::fixed << std::setprecision(5) << dequeTime << " us" << std::endl;
 	}
 	catch(std::exception &exep) {
-		std::cerr << exep.what() << std::endl;
+		std::cerr << _RED << exep.what() << _END << std::endl;
 	}
 	return (0);
 }

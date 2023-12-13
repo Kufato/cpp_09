@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:23 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/12 15:53:01 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/13 18:05:06 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@
 #define _PURPLE		"\033[0;35m"
 #define _CYAN		"\033[0;36m"
 
+#include <deque>
 #include <vector>
+#include <iomanip>
 #include <cstdlib>
 #include <utility>
 #include <iostream>
@@ -36,8 +38,8 @@ class	PmergeMe {
 
 	public:
 	// Public method
-		// static void	algorithmList(int argc, char **argv);
-		static std::vector<int>	algorithmVector(std::vector<int> X);
+		template <typename T>
+		static T	algorithm(T X);
 
 	// Execptions
 		class	NegativeNumberException : public std::exception {
