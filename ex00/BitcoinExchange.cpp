@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:48 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/11 14:39:16 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/14 15:57:47 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,12 +141,16 @@ void	BitcoinExchange::searchValue(char *database) {
 
 	databaseFile.open(database);
 	if (!databaseFile.is_open()) {
-		std::cerr << _RED << "error: could not open the file" << _END << std::endl;
+		std::cerr << _RED << "Error: could not open the file" << _END << std::endl;
 		return ;
 	}
 	getline(databaseFile, line);
+	if (line.empty()) {
+		std::cerr << _RED << "Error: the file is empty" << _END << std::endl;
+		return ;
+	}
 	if (line != "date | value") {
-		std::cerr << _RED << "The first line must be \"date | value\"" << _END << std::endl;
+		std::cerr << _RED << "Error: the first line must be \"date | value\"" << _END << std::endl;
 		return ;
 	}
 	while (getline(databaseFile, line)) {

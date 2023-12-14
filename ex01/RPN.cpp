@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 15:23:54 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/12 15:54:25 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/14 16:56:41 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static bool	checkArgFormat(std::string arg) {
 void	RPN::reversePolishNotation(std::string arg) {
 	if (!checkArgCharacters(arg))
 		throw RPN::ErrorExecption();
-	if (!checkArgFormat(arg))b 
+	if (!checkArgFormat(arg))
 		throw RPN::ErrorExecption();
 	for (size_t i = 0; i < arg.length(); i += 2) {
 		if (isdigit(arg[i])) {
@@ -73,7 +73,8 @@ void	RPN::reversePolishNotation(std::string arg) {
 					_stack.push(value1 / value2);
 					break ;
 				default:
-					break ;
+					std::cerr << "Error" << std::endl;
+					return ;
 			}
 		}
 	}
