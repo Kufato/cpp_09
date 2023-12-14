@@ -6,13 +6,13 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:19 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/14 13:49:04 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:41:55 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-// Vector
+// -------------------- Vector --------------------
 static std::vector<int>::iterator binarySearchVector(std::vector<int> &A, int target) {
 	int	mid;
 	int	left = 0;
@@ -62,12 +62,12 @@ std::vector<int>	PmergeMe::algorithmVector(std::vector<int> X) {
 		S.insert(binarySearchVector(S, it->second), it->second);
 	// insert the last element of X if X has an odd number of elements
 	if (X.size() % 2)
-		S.insert(S.begin(), X.back());
+		S.insert(binarySearchVector(S, X.back()), X.back());
 	return (S);
 }
 
-// Deque
-static std::deque<int>::iterator binarySearchVector(std::deque<int> &A, int target) {
+// -------------------- Deque --------------------
+static std::deque<int>::iterator binarySearchDeque(std::deque<int> &A, int target) {
 	int	mid;
 	int	left = 0;
 	int	right = (A.size() - 1);
@@ -113,10 +113,10 @@ std::deque<int>	PmergeMe::algorithmDeque(std::deque<int> X) {
 	}
 	// insert the elements remaining in S
 	for (std::deque<std::pair<int, int> >::iterator it = Vpair.begin(); it != Vpair.end(); it++)
-		S.insert(binarySearchVector(S, it->second), it->second);
+		S.insert(binarySearchDeque(S, it->second), it->second);
 	// insert the last element of X if X has an odd number of elements
 	if (X.size() % 2)
-		S.insert(S.begin(), X.back());
+		S.insert(binarySearchDeque(S, X.back()), X.back());
 	return (S);
 }
 
