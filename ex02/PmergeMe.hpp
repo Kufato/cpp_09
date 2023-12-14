@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:23 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/13 18:05:06 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:32:41 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ class	PmergeMe {
 
 	public:
 	// Public method
-		template <typename T>
-		static T	algorithm(T X);
+		static std::deque<int>	algorithmDeque(std::deque<int> X);
+		static std::vector<int>	algorithmVector(std::vector<int> X);
 
 	// Execptions
 		class	NegativeNumberException : public std::exception {

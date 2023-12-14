@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:29 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/13 18:13:19 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:40:20 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ int main(int argc, char **argv) {
 			deque.push_back(std::atoi(argv[i]));
 		print(vector, "Before:\t");
 		mainStart = clock();
-		vector = PmergeMe::algorithm(vector);
+		vector = PmergeMe::algorithmVector(vector);
 		vectorEnd = clock();
-		deque = PmergeMe::algorithm(deque);
+		deque = PmergeMe::algorithmDeque(deque);
 		dequeEnd = clock();
 		print(vector, "After:\t");
 		vectorTime = (vectorEnd - mainStart) / (double) CLOCKS_PER_SEC * 1000000.0;
