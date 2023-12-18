@@ -6,37 +6,55 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:48 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/14 15:57:47 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:01:55 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
 // Constructor
-BitcoinExchange::BitcoinExchange(void) {
-	return ;
-}
-BitcoinExchange::BitcoinExchange(std::string database) {
+static bool	parsingDataFile(void) {
+	char			*endPtr;
 	double			value;
 	std::string		date;
 	std::string		line;
 	std::ifstream	file;
 
-	file.open(database.c_str());
+	file.open("data.csv");
 	if (!file.is_open()) {
-		std::cerr << _RED << "error: could not open the file" << _END << std::endl;
-		return ;
+		std::cerr << _RED << "Error: could not open the file" << _END << std::endl;
+		return (false);
 	}
 	getline(file, line);
+	if (line != "date,exchange_rate") {
+		std::cerr << _RED << "Error: first line of data.csv must be \"date,exchange_rate\"" << _END << std::endl;
+		return (false);
+	}
 	while (getline(file, line)) {
-		date = line.substr(0, 10);
+		if (line.empty()) {
+			std::cerr << _RED << "Error: empty line are not welcom" << _END << std::endl;
+			return (false);
+		}
 		std::size_t pos = line.find(",");
-		char *endPtr;
-		value = std::strtod(line.substr(pos + 1).c_str(), &endPtr);
-		this->_database[date] = value;
+		if (pos != std::string::npos) {
+			date = line.substr(0, (pos - 1));
+			value = std::strtod(line.substr(pos + 1).c_str(), &endPtr);
+			if (line.substr(pos + 1) == endPtr) {
+				std::cerr << _RED << "Error: no values found => " << line << _END << std::endl;
+				return (false);
+			}
+			if (!checkDate(date) || !checkValue(value))
+				return (false);
+			else
+				this->_database[date] = value;
+		}
+		else {
+			std::cerr << _RED << "Error: the line is in the wrong format => " << line << _END << std::endl;
+			return (false);
+		}
 	}
 	file.close();
-	return ;
+	return (true);
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &toCopy) {
@@ -58,53 +76,39 @@ BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &toCopy) {
 }
 
 // Public method
-static bool checkPatternDate(const char *pattern, std::string date) {
-	regex_t		preg;
-	regmatch_t	pmatch;
+static bool checkDate(std::string date) {
+	int					year, month, day;
+	char				dash1, dash2, space1, space2, pipe;
+	char				*dateFormat;
+	double				value;
+	struct tm			tm;
+	std::istringstream	checkDate(date);
 
-	if (regcomp(&preg, pattern, REG_NOSUB | REG_EXTENDED))
-		return false;
-	if (!regexec(&preg, date.c_str(), 1, &pmatch, 0)) {
-		regfree(&preg);
-		return true;
+	if (!checkDate >> year >> dash1 >> month >> dash2 >> day >> space1 >> pipe >> space2 >> value && dash1 != '-' && dash2 != '-') {
+		std::cerr << "Error: bad input => " << date << std::endl;
+		return (false);
 	}
-	regfree(&preg);
-	return false;
-}
-
-static bool checkDate(std::string line) {
-	const char	*patternDate = "^[0-9]{4,}-[0-9]{2}-[0-9]{2} \\| $";
-	std::size_t pos = line.find("| ");
-	std::string	dateTmp = line.substr(0, pos + 2);
-	std::string dateError = line.substr(0, pos - 1);
-
-	if (!checkPatternDate(patternDate, dateTmp)) {
-		std::cerr << "Error: bad input => " << dateError << std::endl;
-		return false;
-	}
-	int	year = std::atoi(line.substr(0, 4).c_str());
-	int	month = std::atoi(line.substr(5, 2).c_str());
-	int	day = std::atoi(line.substr(8, 2).c_str());
-	if ((year == 2009 && month == 1 && day < 2) || year < 2009) {
+	dateFormat = strptime(date, "%Y-%m-%d", &tm)
+	if ((tm.tm_year == 2009 && tm.tm_mon == 1 && tm.tm_mday < 2) || tm.tm_year < 2009) {
 		std::cerr << "Error: the date is too old" << std::endl;
 		return false;
 	}
-	if (month > 12 || day > 31) {
+	if (tm.tm_mon > 12 || tm.tm_mday > 31) {
 		std::cerr << "Error: bad input => " << dateError << std::endl;
 		return false;
 	}
-	if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+	if ((tm.tm_mon == 4 || tm.tm_mon == 6 || tm.tm_mon == 9 || tm.tm_mon == 11) && tm.tm_mday > 30) {
 		std::cerr << "Error: bad input => " << dateError << std::endl;
 		return false;
 	}
-	if (month == 2) {
-		if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
-			if (day > 29) {
+	if (tm.tm_mon == 2) {
+		if ((tm.tm_year % 4 == 0 && tm.tm_year % 100 != 0) || (tm.tm_year % 400 == 0)) {
+			if (tm.tm_mday > 29) {
 		std::cerr << "Error: bad input => " << dateError << std::endl;
 				return false;
 			}
 		}
-		else if (day > 28) {
+		else if (tm.tm_mday > 28) {
 		std::cerr << "Error: bad input => " << dateError << std::endl;
 			return false;
 		}
@@ -112,15 +116,7 @@ static bool checkDate(std::string line) {
 	return true;
 }
 
-static bool checkValue(std::string line) {
-	char 		*endPtr;
-	std::string	valueTmp = line.substr(13);
-	double		value = std::strtod(valueTmp.c_str(), &endPtr);
-	
-	if (valueTmp.size() == 0) {
-		std::cerr << "Error: no value found" << std::endl;
-		return false;
-	}
+static bool checkValue(double value) {
 	if (value > 1000.0) {
 		std::cerr << "Error: too large a number." << std::endl;
 		return false;
@@ -139,6 +135,8 @@ void	BitcoinExchange::searchValue(char *database) {
 	std::string		line;
 	std::ifstream	databaseFile;
 
+	if (!parsingDataFile())
+		return ;
 	databaseFile.open(database);
 	if (!databaseFile.is_open()) {
 		std::cerr << _RED << "Error: could not open the file" << _END << std::endl;
@@ -154,11 +152,11 @@ void	BitcoinExchange::searchValue(char *database) {
 		return ;
 	}
 	while (getline(databaseFile, line)) {
+		std::size_t pos = line.find(" | ");
+		date = line.substr(0, pos - 1);
+		value = std::strtod(line.substr(pos + 2).c_str(), &endPtr);
 		if (checkDate(line)) {
 			if (checkValue(line)) {
-				std::size_t pos = line.find("| ");
-				date = line.substr(0, pos - 1);
-				value = std::strtod(line.substr(pos + 2).c_str(), &endPtr);
 				std::map<std::string, double>::iterator	it = this->_database.find(date); 
 				if (it == this->_database.end()) {
 					it = this->_database.lower_bound(date);

@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:43:12 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/06 16:25:00 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:00:07 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	main(int argc, char **argv) {
 		std::cerr << _RED << "Wrong number of arguments !" << _END << std::endl;
 		return (1);
 	}
-	BitcoinExchange	btc("data.csv");
-	btc.searchValue(argv[1]);
+	BitcoinExchange::searchValue(argv[1]);
 	return (0);
 }

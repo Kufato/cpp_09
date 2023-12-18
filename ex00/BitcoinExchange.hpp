@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:59 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/07 15:35:54 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:47:59 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 #define _CYAN	"\033[0;36m"
 
 #include <map>
-#include <regex.h>
+#include <time.h>
+#include <sstream>
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
@@ -35,7 +36,6 @@ class	BitcoinExchange {
 	public:
 	// Constructors
 		BitcoinExchange(void);
-		BitcoinExchange(std::string database);
 		BitcoinExchange(const BitcoinExchange &toCopy);
 
 	// Destructor
