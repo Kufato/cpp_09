@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:59 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/18 16:47:59 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 11:46:26 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@
 #include <iostream>
 
 class	BitcoinExchange {
-	
+
 	private:
-		std::map<std::string, double>	_database;
+		static std::map<std::string, double>	_database;
+		static bool	parsingDataFile(void);
+		BitcoinExchange(void);
+		BitcoinExchange(const BitcoinExchange &toCopy);
 
 	public:
 	// Constructors
-		BitcoinExchange(void);
-		BitcoinExchange(const BitcoinExchange &toCopy);
 
 	// Destructor
 		~BitcoinExchange(void);
@@ -45,5 +46,5 @@ class	BitcoinExchange {
 		BitcoinExchange &operator=(const BitcoinExchange &toCopy);
 
 	// Public method
-		void	searchValue(char *database);
+		static void	searchValue(char *input);
 };
