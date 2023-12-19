@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:48 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/19 16:07:02 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 16:55:31 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,6 @@ bool	BitcoinExchange::parsingDataFile(void) {
 		return (false);
 	}
 	while (getline(file, line)) {
-		if (line.empty()) {
-			std::cerr << _RED << "Error: empty line are not welcom" << _END << std::endl;
-			return (false);
-		}
 		if (checkFormatData(line)) {
 			std::size_t pos = line.find(",");
 			date = line.substr(0, pos);
@@ -144,10 +140,8 @@ bool	BitcoinExchange::parsingDataFile(void) {
 			else
 				_database[date] = value;
 		}
-		else {
-			std::cerr << _RED << "Error: the line is in the wrong format => " << line << _END << std::endl;
+		else
 			return (false);
-		}
 	}
 	file.close();
 	return (true);
@@ -184,10 +178,6 @@ void	BitcoinExchange::searchValue(char *input) {
 		return ;
 	}
 	while (getline(inputFile, line)) {
-		if (line.empty()) {
-			std::cerr << _RED << "Error: empty line are not welcom" << _END << std::endl;
-			return ;
-		}
 		if (checkFormatInput(line)) {
 			std::size_t pos = line.find("|");
 			date = line.substr(0, pos - 1);

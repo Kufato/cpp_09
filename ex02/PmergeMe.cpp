@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:19 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/14 17:41:55 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 17:29:02 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,6 @@ std::deque<int>	PmergeMe::algorithmDeque(std::deque<int> X) {
 }
 
 // Exceptions
-const char	*PmergeMe::NegativeNumberException::what(void) const throw() {
-	return ("error: negative numbers are not welcome");
+const char	*PmergeMe::BadInputsException::what(void) const throw() {
+	return ("error: wrong inputs");
 }

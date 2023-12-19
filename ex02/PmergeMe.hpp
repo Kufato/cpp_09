@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:23 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/14 13:32:41 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 17:28:36 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 
 #include <deque>
 #include <vector>
+#include <locale>
 #include <iomanip>
 #include <cstdlib>
 #include <utility>
@@ -42,7 +43,7 @@ class	PmergeMe {
 		static std::vector<int>	algorithmVector(std::vector<int> X);
 
 	// Execptions
-		class	NegativeNumberException : public std::exception {
+		class	BadInputsException : public std::exception {
 			public:
 				virtual const char	*what(void) const throw();
 		};

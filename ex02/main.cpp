@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:48:29 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/14 17:14:50 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 17:29:37 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,12 @@ static void	print(const T &container, std::string message) {
 	std::cout << std::endl;
 }
 
-static bool	checkNegativeNumber(char **argv) {
+static bool	checkNumbers(char **argv) {
 	for (int i = 1; argv[i]; i++) {
+		for (int j = 0; argv[i][j]; j++) {
+			if (!isdigit(argv[i][j]))
+				return (false);
+		}
 		if (std::atoi(argv[i]) < 0)
 			return (false);
 	}
@@ -33,18 +37,14 @@ int main(int argc, char **argv) {
 		std::cerr << _RED << "error: you must enter a series of numbers" << _END << std::endl;
 		return (1);
 	}
-	if (argc < 3) {
-		std::cerr << _RED << "error: one number is not enough" << _END << std::endl;
-		return (1);
-	}
 	try {
 		std::deque<int>		deque;
 		std::vector<int>	vector;
 		double				vectorTime, dequeTime;
 		clock_t				mainStart, vectorEnd, dequeEnd;
 
-		if (!checkNegativeNumber(argv))
-			throw PmergeMe::NegativeNumberException();
+		if (!checkNumbers(argv))
+			throw PmergeMe::BadInputsException();
 		for (int i = 1; argv[i]; i++)
 			vector.push_back(std::atoi(argv[i]));
 		for (int i = 1; argv[i]; i++)
