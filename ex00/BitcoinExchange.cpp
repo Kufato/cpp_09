@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:48 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/19 11:44:41 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 16:07:02 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,32 +38,52 @@ BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &toCopy) {
 }
 
 // Public method
-// -------------------- Check Date/Value --------------------
-static bool	checkDate(std::string date) {
-	struct tm	tm;
+// -------------------- Utils --------------------
+static bool checkPattern(const char *pattern, std::string line) {
+	regex_t		preg;
+	regmatch_t	pmatch;
 
-	strptime(date.c_str(), "%Y-%m-%d", &tm);
-	if ((tm.tm_year == 2009 && tm.tm_mon == 1 && tm.tm_mday < 2) || tm.tm_year < 2009) {
+	if (regcomp(&preg, pattern, REG_NOSUB | REG_EXTENDED))
+		return false;
+	if (!regexec(&preg, line.c_str(), 1, &pmatch, 0)) {
+		regfree(&preg);
+		return true;
+	}
+	regfree(&preg);
+	return false;
+}
+
+static bool	checkDate(std::string date) {
+	int			year, month, day;
+	std::size_t	pos1, pos2;
+
+	pos1 = date.find("-");
+	pos2 = date.find("-", (pos1 + 1));
+	year = atoi(date.substr(0, pos1).c_str());
+	month = atoi(date.substr((pos1 + 1), (pos2 - 1)).c_str());
+	day = atoi(date.substr(pos2 + 1).c_str());
+
+	if ((year == 2009 && month == 1 && day < 2) || year < 2009) {
 		std::cerr << "Error: the date is too old" << std::endl;
 		return false;
 	}
-	if (tm.tm_mon > 12 || tm.tm_mday > 31) {
-		std::cerr << "Error: bad input => " << date << std::endl;
+	if (month > 12 || day > 31) {
+		std::cerr << "Error: bad date => " << date << std::endl;
 		return false;
 	}
-	if ((tm.tm_mon == 4 || tm.tm_mon == 6 || tm.tm_mon == 9 || tm.tm_mon == 11) && tm.tm_mday > 30) {
-		std::cerr << "Error: bad input => " << date << std::endl;
+	if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+		std::cerr << "Error: bad date => " << date << std::endl;
 		return false;
 	}
-	if (tm.tm_mon == 2) {
-		if ((tm.tm_year % 4 == 0 && tm.tm_year % 100 != 0) || (tm.tm_year % 400 == 0)) {
-			if (tm.tm_mday > 29) {
-		std::cerr << "Error: bad input => " << date << std::endl;
+	if (month == 2) {
+		if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+			if (day > 29) {
+		std::cerr << "Error: bad date => " << date << std::endl;
 				return false;
 			}
 		}
-		else if (tm.tm_mday > 28) {
-		std::cerr << "Error: bad input => " << date << std::endl;
+		else if (day > 28) {
+		std::cerr << "Error: bad date => " << date << std::endl;
 			return false;
 		}
 	}
@@ -84,16 +104,9 @@ static bool checkValue(double value) {
 
 // -------------------- Data File --------------------
 static bool checkFormatData(std::string line) {
-	int					year, month, day;
-	char				dash1, dash2, comma;
-	double				value;
-	std::istringstream	checkLine(line);
+	const char	*pattern = "^[0-9]{1,}-[0-9]{2}-[0-9]{2},[0-9]{1,}(\\.[0-9]{1,}){0,}$";
 
-	if (!(checkLine >> year >> dash1 >> month >> dash2 >> day >> comma >> value)) {
-		std::cerr << "Error: bad input => " << line << std::endl;
-		return (false);
-	}
-	if (dash1 != '-' || dash2 != '-' || comma != ',') {
+	if (!checkPattern(pattern, line)) {
 		std::cerr << "Error: bad input => " << line << std::endl;
 		return (false);
 	}
@@ -124,10 +137,9 @@ bool	BitcoinExchange::parsingDataFile(void) {
 		}
 		if (checkFormatData(line)) {
 			std::size_t pos = line.find(",");
-			date = line.substr(0, (pos - 1));
+			date = line.substr(0, pos);
 			value = std::strtod(line.substr(pos + 1).c_str(), &endPtr);
-			std::cout << _GREEN << "data: date = " << date << " and value = " << value << _END << std::endl;
-			if (!checkDate(date) || !checkValue(value))
+			if (!checkDate(date))
 				return (false);
 			else
 				_database[date] = value;
@@ -143,22 +155,14 @@ bool	BitcoinExchange::parsingDataFile(void) {
 
 // -------------------- Input File --------------------
 static bool checkFormatInput(std::string line) {
-	int					year, month, day;
-	char				dash1, dash2, space1, space2, pipe;
-	double				value;
-	std::istringstream	checkLine(line);
+	const char	*pattern = "^[0-9]{1,}-[0-9]{2}-[0-9]{2} \\| -?[0-9]{1,}(\\.[0-9]{1,}){0,}$";
 
-	if (!(checkLine >> year >> dash1 >> month >> dash2 >> day >> space1 >> pipe >> space2 >> value)) {
-		std::cerr << "Error: bad input => " << line << std::endl;
-		return (false);
-	}
-	if (dash1 != '-' || dash2 != '-' || space1 != ' ' || space2 != ' ' || pipe != ' ') {
+	if (!checkPattern(pattern, line)) {
 		std::cerr << "Error: bad input => " << line << std::endl;
 		return (false);
 	}
 	return (true);
 }
-
 
 void	BitcoinExchange::searchValue(char *input) {
 	char			*endPtr;
@@ -186,19 +190,16 @@ void	BitcoinExchange::searchValue(char *input) {
 		}
 		if (checkFormatInput(line)) {
 			std::size_t pos = line.find("|");
-			date = line.substr(0, pos - 2);
+			date = line.substr(0, pos - 1);
 			value = std::strtod(line.substr(pos + 2).c_str(), &endPtr);
-			std::cout << _GREEN << "input: date = " << date << " and value = " << value << _END << std::endl;
-			if (!checkDate(date) || !checkValue(value))
-				return ;
-			else {
+			if (checkDate(date) && checkValue(value)) {
 				std::map<std::string, double>::iterator	it = _database.find(date); 
 				if (it == _database.end()) {
 					it = _database.lower_bound(date);
 					if (it != _database.begin())
 						--it;
-					std::cout << date << " => " << value << " = " << (value * it->second) << std::endl;
 				}
+				std::cout << date << " => " << value << " = " << (value * it->second) << std::endl;
 			}
 		}
 	}

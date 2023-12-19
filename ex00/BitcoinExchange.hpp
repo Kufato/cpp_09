@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 14:41:59 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/19 11:46:26 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/19 16:02:01 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 
 #include <map>
 #include <time.h>
+#include <regex.h>
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
