@@ -6,7 +6,7 @@
 /*   By: axcallet <axcallet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 15:23:54 by axcallet          #+#    #+#             */
-/*   Updated: 2023/12/14 16:56:41 by axcallet         ###   ########.fr       */
+/*   Updated: 2023/12/20 13:46:44 by axcallet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static bool	checkArgFormat(std::string arg) {
 		if (i % 2 != 0 && arg[i] != ' ')
 			return (false);
 	}
-	if (arg[i] == ' ' || isdigit(arg[i]))
+	if (arg[i] == ' ' || isdigit(arg[i]) || arg[i - 1] != ' ')
 		return (false);
 	return (true);
 }
